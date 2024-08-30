@@ -21,6 +21,6 @@ export class MeasureEntity {
   @Column('int', { nullable: true })
   measurement_value: number;
 
-  @Column('boolean', { nullable: true })
+  @Column('boolean', { default: false })
   has_confirmed: boolean;
 }
