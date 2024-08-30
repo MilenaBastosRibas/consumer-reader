@@ -39,18 +39,31 @@ export class GeminiService {
           fileData: {
             mimeType: uploadedImage.file.mimeType,
             fileUri: uploadedImage.file.uri
-          }
+          },
         },
         {
-          text: `Identify the numbers on the gas and water consumption meter display in the image.
-            If it is an analog display, take into account that it may be necessary to carefully
-            interpret which number is currently being marked until it scroll to the next number.
-            Report the number interpreted as consumption measurement in integer format.
-            Use the value 0 if it not seems to be an image measuring this resources.`
+          text: `
+            1. Analise a imagem de forma detalhada e identifique o display que mede o consumo de gás e água, estando sempre em cima ou do lado da unidade de medida em metros cúbicos.
+            2. Se a imagem não for interpretada como um medidor de consumo, retorne logo o número 0.
+            3. Se a imagem for identificada como um medidor de consumo: identifique agora cada casa numérica do medidor para realizar a leitura completa de consumo, levando em consideração que cada medidor possui no máximo 8 casas numéricas.
+            4. Separe a parte inteira da leitura que está destacada com fundo preto ou branco.
+            5. Separe a parte decimal da leitura que está destacada na cor vermelha.
+            6. Leve em consideração o exemplo de medição de gás: para uma leitura "00000040", deve retornar o número "0.040".
+            7. Leve em consideração o exemplo de medição de água: para uma leitura "000019" deve retornar o número "0.19".
+            Levando em consideração os passos acima, retorne apenas o valor final somando a parte inteira com a parte decimal.
+          `
         },
       ]);
+      
       await this.geminiFileManager.deleteFile(uploadedImage.file.name)
-      return Number(result.response.text().replace(/\D/g, ''));
+
+      let measurement = parseFloat(result.response.text().replace(/[^0-9.]+/g, ''));
+
+      if (isNaN(measurement)) {
+        measurement = 0;
+      }
+
+      return measurement;
     } catch (exception) {
       console.error(exception);
       throw new HttpException(

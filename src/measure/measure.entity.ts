@@ -18,7 +18,7 @@ export class MeasureEntity {
   @Column('text', { nullable: true })
   image_name: string;
 
-  @Column('int', { nullable: true })
+  @Column('decimal', { nullable: true, precision: 10, scale: 3 })
   measurement_value: number;
 
   @Column('boolean', { default: false })
