@@ -1,0 +1,26 @@
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { MEASURE_TYPES } from './measure.interfaces';
+
+@Entity()
+export class MeasureEntity {
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
+
+  @Column('varchar', { length: 50 })
+  customer_code: string;
+
+  @Column('datetime')
+  measurement_datetime: Date;
+
+  @Column('text')
+  type: MEASURE_TYPES;
+
+  @Column('text', { nullable: true })
+  image_name: string;
+
+  @Column('int', { nullable: true })
+  measurement_value: number;
+
+  @Column('boolean', { nullable: true })
+  has_confirmed: boolean;
+}
